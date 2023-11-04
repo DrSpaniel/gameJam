@@ -16,15 +16,35 @@ space guy
 let bg;
 let spaceGuy;
 let keys = [];
+let spaceGuyImages = [];
+let spaceGuyLeftStand;
+let spaceGuyLeftWalk;
+let spaceGuyRightStand;
+let spaceGuyRightWalk;
+let spaceGuyDefault;
+let currentFrame = 0;
+let frameDelay = 10; // Adjust this value to change the delay
 
 function preload() {
-  bg = loadImage("assets/images/bg.jpg");
-  spaceGuy = loadImage("assets/images/spaceguy/spaceguy.png"); // Load the spaceGuy image
+  bg = loadImage("assets/images/rooms/bg.jpg");
+  spaceGuyLeftStand = loadImage("assets/images/spaceguy/spaceguyleftstand.png");
+  spaceGuyLeftWalk = loadImage("assets/images/spaceguy/spaceguyleftwalk.png");
+  spaceGuyRightStand = loadImage(
+    "assets/images/spaceguy/spaceguyrightstand.png"
+  );
+  spaceGuyRightWalk = loadImage("assets/images/spaceguy/spaceguyrightwalk.png");
+  spaceGuyDefault = loadImage("assets/images/spaceguy/spaceguy.png");
+  spaceGuyImages = [
+    spaceGuyLeftStand,
+    spaceGuyLeftWalk,
+    spaceGuyRightStand,
+    spaceGuyRightWalk,
+  ];
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  spaceGuy = new SpaceGuy(width / 2, height / 2, spaceGuy); // Pass the spaceGuy image
+  spaceGuy = new SpaceGuy(width / 2, height / 2, spaceGuyDefault);
 }
 
 function draw() {
@@ -50,11 +70,12 @@ class SpaceGuy {
     this.x = x;
     this.y = y;
     this.speed = 5;
-    this.img = img; // The spaceGuy image
+    this.img = img;
+    this.frameCount = 0;
   }
 
   display() {
-    image(this.img, this.x, this.y, 64, 120); // Display the spaceGuy image
+    image(this.img, this.x, this.y, 64, 120);
   }
 
   move() {
@@ -67,16 +88,36 @@ class SpaceGuy {
       this.y += this.speed;
     }
     if (keys[65]) {
-      // A key
+      // A key (left movement)
       this.x -= this.speed;
+      if (this.frameCount === 0) {
+        this.frameCount = 1;
+      }
+      this.frameCount++;
+      if (this.frameCount >= frameDelay) {
+        this.img = spaceGuyImages[currentFrame];
+        currentFrame = (currentFrame + 1) % 2;
+        this.frameCount = 0;
+      }
     }
     if (keys[68]) {
-      // D key
+      // D key (right movement)
       this.x += this.speed;
+      if (this.frameCount === 0) {
+        this.frameCount = 1;
+      }
+      this.frameCount++;
+      if (this.frameCount >= frameDelay) {
+        this.img = spaceGuyImages[2 + currentFrame];
+        currentFrame = (currentFrame + 1) % 2;
+        this.frameCount = 0;
+      }
     }
-  }
-
-  walkCycle() {
-    // This function will animate the spaceGuy
+    if ((!keys[65] && !keys[68]) || (keys[65] && keys[68])) {
+      // No left or right keys pressed
+      this.img = spaceGuyDefault;
+      currentFrame = 0;
+      this.frameCount = 0;
+    }
   }
 }
