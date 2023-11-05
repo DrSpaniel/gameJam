@@ -20,10 +20,22 @@ let spaceGuyImages = [];
 let spaceGuyDefault;
 let currentFrame = 0;
 let frameDelay = 10;
+let room = 0; //defaults to the first room
 
 function preload() {
-  bg = loadImage("assets/images/rooms/bg.jpg");
-  spaceGuyDefault = loadImage("assets/images/spaceguy/spaceguy.png");
+  //init background images
+  let R1 = loadImage("assets/images/rooms/R1.png");
+  let R2 = loadImage("assets/images/rooms/R2.png");
+  let R3 = loadImage("assets/images/rooms/R3.png");
+  let R4 = loadImage("assets/images/rooms/R4.png");
+  let R5 = loadImage("assets/images/rooms/R5.png");
+  let R6 = loadImage("assets/images/rooms/R6.png");
+  let R7 = loadImage("assets/images/rooms/R7.png");
+  let R8 = loadImage("assets/images/rooms/R8.png");
+  let R9 = loadImage("assets/images/rooms/R9.png");
+  bg = R1; //start in bedroom
+
+  spaceGuyDefault = loadImage("assets/images/Character/REST/Resting1.png");
   spaceGuyImages = loadSpaceGuyImages();
 }
 
@@ -47,44 +59,138 @@ function loadSpaceGuyImages() {
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(1024, 576);
   spaceGuy = new SpaceGuy(width / 2, height / 2, spaceGuyDefault);
 }
 
 function draw() {
   background(bg);
+  //roomChange(); //changes room depending on the triggers
   spaceGuy.display();
   spaceGuy.move();
   vibeCheck();
+  vibeCheckRoom();
+  //print(room);
+  debugCoord();
 }
 
-function mainArea() {
-  // Check if spaceGuy enters the trigger space in the default room (bedroom).
-  // If so, teleport to hallScene.
-}
-
-function hallScene() {
-  // Depending on the "prog" variable, hallscene will have a different background and narration audio.
+function debugCoord() {
+  //when mouse clicked, print x and y coords
+  if (mouseIsPressed) {
+    print("x: " + mouseX + " y: " + mouseY);
+    print(room);
+  }
 }
 
 function vibeCheck() {
   // Ensure spaceGuy stays within the canvas bounds.
-  if (spaceGuy.x < 0) {
-    spaceGuy.x = 0;
-  }
-  if (spaceGuy.x > windowWidth - 32) {
-    spaceGuy.x = windowWidth - 32;
-  }
-  if (spaceGuy.y < 0) {
-    spaceGuy.y = 0;
-  }
-  if (spaceGuy.y > windowHeight - 64) {
-    spaceGuy.y = windowHeight - 64;
+
+  if (room == 0) {    //bounds for bedroom
+    if (spaceGuy.x < 295) {
+      spaceGuy.x = 295;
+    }
+    if (spaceGuy.x > 728 - 16) {
+      spaceGuy.x = 728 - 16;
+    }
+    if (spaceGuy.y < 164) {
+      spaceGuy.y = 164;
+    }
+    if (spaceGuy.y > 433 - 32) {
+      spaceGuy.y = 433 - 32;
+    }
+  } else if (room == 1) { //bounds for hallway
+    if (spaceGuy.x < 0) {
+      spaceGuy.x = 0;
+    }
+    if (spaceGuy.x > width - 16) {
+      spaceGuy.x = width - 16;
+    }
+    if (spaceGuy.y < 288) {
+      spaceGuy.y = 288;
+    }
+    if (spaceGuy.y > 424 - 32) {
+      spaceGuy.y = 424 - 32;
+    }
+  }else if (room == 2)  //bounds for main room
+    {
+
+    }
+}
+
+function vibeCheckRoom() {
+  //this sets triggers and changes room var for roomchange to use
+  if (room == 0) {
+    //only trigger in bedroom
+    if (spaceGuy.y < 332 && spaceGuy.y > 252) {
+      if (spaceGuy.x > 687 && spaceGuy.x < 728) {
+        print("hooray!");
+        //set room to 1, hallway
+        room = 1;
+        roomChange();
+      }
+    }
+  } else if (room == 1) {
+    //continue for checkers in each room (hallway next)
+    if (spaceGuy.y < 420 && spaceGuy.y > 286) {
+      if (spaceGuy.x < 77 && spaceGuy.x > 7) {
+        print("hooray!");
+        //set room to 1, hallway
+        room = 0;
+        roomChange();
+      }
+    } else if (spaceGuy.y < 420 && spaceGuy.y > 291) {  //this should check if continue
+      if (spaceGuy.x < 1020 && spaceGuy.x > 970) {
+        print("hooray!");
+       
+        room = 2;
+        roomChange();
+      }
+    }
+  } else if (room == 2) {
+
   }
 }
 
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+function roomChange() {
+  if (room == 0) {
+    bg = loadImage("assets/images/rooms/R1.png");
+    spaceGuy.x = 670;
+    spaceGuy.y = 287;
+    //bg = R1;
+    //bedroom
+    //play ambient music (music.mp3)
+    //set bounds of room
+  } else if (room == 1) {
+    bg = loadImage("assets/images/rooms/R2.png");
+    spaceGuy.x = 108;
+    spaceGuy.y = 350;
+    //hall 1
+    //play hallway music
+    //move x and y of spaceguy to far left
+  } else if (room == 2) {
+    bg = loadImage("assets/images/rooms/R3.png");
+    //main room
+    //play again ambient music
+    //change room to main room
+  } else if (room == 3) {
+    //hall 2
+    //change room
+  } else if (room == 4) {
+    //water room
+  } else if (room == 5) {
+    //hall 3
+  } else if (room == 6) {
+    //pilot room
+  } else if (room == 7) {
+    //hall 4
+    //vertical room
+  } else if (room == 8) {
+    //SPACE!!!!!!!!
+    //play space music
+    //change cat img
+  } else if (room == 9) {
+    //final locked room access
+  }
 }
 
 function keyPressed() {
@@ -94,7 +200,6 @@ function keyPressed() {
 function keyReleased() {
   keys[keyCode] = false;
 }
-
 
 class SpaceGuy {
   constructor(x, y, img) {
@@ -109,7 +214,7 @@ class SpaceGuy {
   }
 
   display() {
-    image(this.img, this.x, this.y, 32, 64);
+    image(this.img, this.x - 16, this.y - 32, 32, 64);
   }
 
   move() {
@@ -183,4 +288,3 @@ class SpaceGuy {
     }
   }
 }
-
