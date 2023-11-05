@@ -13,7 +13,7 @@ space guy
 
 "use strict";
 
-let bg;
+let bg; //initializing stuff that otherwise would break
 let spaceGuy;
 let keys = [];
 let spaceGuyImages = [];
@@ -25,8 +25,16 @@ let spaceGuyDefault;
 let currentFrame = 0;
 let frameDelay = 10; // Adjust this value to change the delay
 
+
+
+let prog = 0;
+//super important variable!!!! this will be used to determine the audio played in the hallScene, as well 
+
+
+
+
 function preload() {
-  bg = loadImage("assets/images/rooms/bg.jpg");
+  bg = loadImage("assets/images/rooms/bg.jpg"); //loading images
   spaceGuyLeftStand = loadImage("assets/images/spaceguy/spaceguyleftstand.png");
   spaceGuyLeftWalk = loadImage("assets/images/spaceguy/spaceguyleftwalk.png");
   spaceGuyRightStand = loadImage(
@@ -35,6 +43,7 @@ function preload() {
   spaceGuyRightWalk = loadImage("assets/images/spaceguy/spaceguyrightwalk.png");
   spaceGuyDefault = loadImage("assets/images/spaceguy/spaceguy.png");
   spaceGuyImages = [
+    //creating image array
     spaceGuyLeftStand,
     spaceGuyLeftWalk,
     spaceGuyRightStand,
@@ -51,6 +60,36 @@ function draw() {
   background(bg);
   spaceGuy.display();
   spaceGuy.move();
+  vibeCheck();
+}
+
+function mainArea() {
+  //checks if spaceGuy enters the trigger space in the default room (bedroom). if so, teleport to hallScene.
+}
+
+//depending on the "prog" variable, hallScene will display different background, and narration audio. 
+
+function hallScene(){
+  //using prog, hallscene will have a different background and narration audio. 
+  
+}
+
+
+function vibeCheck() {
+  //ensures spaceGuy is within the canvas and does not leave
+
+  if (spaceGuy.x < 0) {
+    spaceGuy.x = 0;
+  }
+  if (spaceGuy.x > windowWidth - 64) {
+    spaceGuy.x = windowWidth - 64;
+  }
+  if (spaceGuy.y < 0) {
+    spaceGuy.y = 0;
+  }
+  if (spaceGuy.y > windowHeight - 120) {
+    spaceGuy.y = windowHeight - 120;
+  }
 }
 
 function windowResized() {
@@ -96,7 +135,7 @@ class SpaceGuy {
       this.frameCount++;
       if (this.frameCount >= frameDelay) {
         this.img = spaceGuyImages[currentFrame];
-        currentFrame = (currentFrame + 1) % 2;
+        currentFrame = (currentFrame + 1) % 2; //modulus operator, if current frame is 1, then it will be 0, if 0 then 1. it works by dividing the current frame by 2 and returning the remainder
         this.frameCount = 0;
       }
     }
