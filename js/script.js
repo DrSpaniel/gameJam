@@ -113,6 +113,18 @@ function vibeCheck() {
     }
   }else if (room == 2)  //bounds for main room
     {
+      if (spaceGuy.x < 294) {
+        spaceGuy.x = 294;
+      }
+      if (spaceGuy.x > 725 - 16) {
+        spaceGuy.x = 725 - 16;
+      }
+      if (spaceGuy.y < 67) {
+        spaceGuy.y = 67;
+      }
+      if (spaceGuy.y > 505 - 32) {
+        spaceGuy.y = 505 - 32;
+      }
 
     }
 }
@@ -129,16 +141,17 @@ function vibeCheckRoom() {
         roomChange();
       }
     }
-  } else if (room == 1) {
+  } else if (room == 1) { //hallway has 2 triggers, bedroom and main room
     //continue for checkers in each room (hallway next)
-    if (spaceGuy.y < 420 && spaceGuy.y > 286) {
+    if (spaceGuy.y < 420 && spaceGuy.y > 286) { //bedroom
       if (spaceGuy.x < 77 && spaceGuy.x > 7) {
         print("hooray!");
         //set room to 1, hallway
         room = 0;
         roomChange();
       }
-    } else if (spaceGuy.y < 420 && spaceGuy.y > 291) {  //this should check if continue
+    }
+    if (spaceGuy.y < 420 && spaceGuy.y > 291) {  //mainroom
       if (spaceGuy.x < 1020 && spaceGuy.x > 970) {
         print("hooray!");
        
@@ -147,7 +160,14 @@ function vibeCheckRoom() {
       }
     }
   } else if (room == 2) {
-
+    if (spaceGuy.y < 316 && spaceGuy.y > 256) { //bedroom
+      if (spaceGuy.x < 325 && spaceGuy.x > 294) {
+        print("hooray!");
+        //set room to 1, hallway
+        room = 1;
+        roomChange();
+      }
+    }
   }
 }
 
@@ -169,9 +189,10 @@ function roomChange() {
     //move x and y of spaceguy to far left
   } else if (room == 2) {
     bg = loadImage("assets/images/rooms/R3.png");
+    spaceGuy.x = 350;
+    spaceGuy.y = 287;
     //main room
     //play again ambient music
-    //change room to main room
   } else if (room == 3) {
     //hall 2
     //change room
