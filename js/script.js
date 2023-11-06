@@ -5,7 +5,7 @@ Programming:
 
 Art: 
 
-Audio:
+Audio:  Aria Tessler
 
 space guy
 
@@ -21,6 +21,12 @@ let spaceGuyDefault;
 let currentFrame = 0;
 let frameDelay = 10;
 let room = 0; //defaults to the first room
+let footstepSound;
+let activeDirectionalKeys = 0; // Track the number of active directional keys
+let musicSound;
+let noiseSound;
+
+//YES I KNOW FOOTSTEPS ARE BROKEN, I WILL FIX THEM LATER
 
 function preload() {
   //init background images
@@ -37,6 +43,13 @@ function preload() {
 
   spaceGuyDefault = loadImage("assets/images/Character/REST/Resting1.png");
   spaceGuyImages = loadSpaceGuyImages();
+  footstepSound = loadSound("assets/sounds/effects/footsteps.mp3");
+
+  musicSound = loadSound("assets/sounds/music.mp3");
+  musicSound.setLoop(true); // Set the music sound to loop indefinitely
+
+  noiseSound = loadSound("assets/sounds/hall.mp3");
+  noiseSound.setLoop(true); // Set the noise sound to loop indefinitely
 }
 
 function loadSpaceGuyImages() {
@@ -61,6 +74,14 @@ function loadSpaceGuyImages() {
 function setup() {
   createCanvas(1024, 576);
   spaceGuy = new SpaceGuy(width / 2, height / 2, spaceGuyDefault);
+
+  const loopStarted = footstepSound.setLoop(true);
+  if (loopStarted) {
+    footstepSound.play(); // Start playing the sound loop
+    footstepSound.pause(); // Pause initially, will be resumed when keys are pressed
+  }
+  musicSound.play();
+  //musicSound.pause();
 }
 
 function draw() {
@@ -85,7 +106,8 @@ function debugCoord() {
 function vibeCheck() {
   // Ensure spaceGuy stays within the canvas bounds.
 
-  if (room == 0) {    //bounds for bedroom
+  if (room == 0) {
+    //bounds for bedroom
     if (spaceGuy.x < 295) {
       spaceGuy.x = 295;
     }
@@ -98,7 +120,8 @@ function vibeCheck() {
     if (spaceGuy.y > 433 - 32) {
       spaceGuy.y = 433 - 32;
     }
-  } else if (room == 1) { //bounds for hallway
+  } else if (room == 1) {
+    //bounds for hallway
     if (spaceGuy.x < 0) {
       spaceGuy.x = 0;
     }
@@ -111,22 +134,21 @@ function vibeCheck() {
     if (spaceGuy.y > 424 - 32) {
       spaceGuy.y = 424 - 32;
     }
-  }else if (room == 2)  //bounds for main room
-    {
-      if (spaceGuy.x < 294) {
-        spaceGuy.x = 294;
-      }
-      if (spaceGuy.x > 725 - 16) {
-        spaceGuy.x = 725 - 16;
-      }
-      if (spaceGuy.y < 67) {
-        spaceGuy.y = 67;
-      }
-      if (spaceGuy.y > 505 - 32) {
-        spaceGuy.y = 505 - 32;
-      }
-
+  } else if (room == 2) {
+    //bounds for main room
+    if (spaceGuy.x < 294) {
+      spaceGuy.x = 294;
     }
+    if (spaceGuy.x > 725 - 16) {
+      spaceGuy.x = 725 - 16;
+    }
+    if (spaceGuy.y < 67) {
+      spaceGuy.y = 67;
+    }
+    if (spaceGuy.y > 505 - 32) {
+      spaceGuy.y = 505 - 32;
+    }
+  }
 }
 
 function vibeCheckRoom() {
@@ -141,9 +163,11 @@ function vibeCheckRoom() {
         roomChange();
       }
     }
-  } else if (room == 1) { //hallway has 2 triggers, bedroom and main room
+  } else if (room == 1) {
+    //hallway has 2 triggers, bedroom and main room
     //continue for checkers in each room (hallway next)
-    if (spaceGuy.y < 420 && spaceGuy.y > 286) { //bedroom
+    if (spaceGuy.y < 420 && spaceGuy.y > 286) {
+      //bedroom
       if (spaceGuy.x < 77 && spaceGuy.x > 7) {
         print("hooray!");
         //set room to 1, hallway
@@ -151,16 +175,18 @@ function vibeCheckRoom() {
         roomChange();
       }
     }
-    if (spaceGuy.y < 420 && spaceGuy.y > 291) {  //mainroom
+    if (spaceGuy.y < 420 && spaceGuy.y > 291) {
+      //mainroom
       if (spaceGuy.x < 1020 && spaceGuy.x > 970) {
         print("hooray!");
-       
+
         room = 2;
         roomChange();
       }
     }
   } else if (room == 2) {
-    if (spaceGuy.y < 316 && spaceGuy.y > 256) { //bedroom
+    if (spaceGuy.y < 316 && spaceGuy.y > 256) {
+      //bedroom
       if (spaceGuy.x < 325 && spaceGuy.x > 294) {
         print("hooray!");
         //set room to 1, hallway
@@ -182,6 +208,7 @@ function roomChange() {
     //set bounds of room
   } else if (room == 1) {
     bg = loadImage("assets/images/rooms/R2.png");
+
     spaceGuy.x = 108;
     spaceGuy.y = 350;
     //hall 1
@@ -191,6 +218,9 @@ function roomChange() {
     bg = loadImage("assets/images/rooms/R3.png");
     spaceGuy.x = 350;
     spaceGuy.y = 287;
+    musicSound.pause();
+    noiseSound.play();
+
     //main room
     //play again ambient music
   } else if (room == 3) {
@@ -216,10 +246,30 @@ function roomChange() {
 
 function keyPressed() {
   keys[keyCode] = true;
+
+  // Check if a WASD key is pressed and update the activeDirectionalKeys count
+  if (keyCode === 87 || keyCode === 83 || keyCode === 65 || keyCode === 68) {
+    activeDirectionalKeys++;
+  }
+
+  // Start or resume the footstep sound loop if at least one directional key is active
+  if (activeDirectionalKeys > 0) {
+    footstepSound.loop();
+  }
 }
 
 function keyReleased() {
   keys[keyCode] = false;
+
+  // Check if a WASD key is released and update the activeDirectionalKeys count
+  if (keyCode === 87 || keyCode === 83 || keyCode === 65 || keyCode === 68) {
+    activeDirectionalKeys--;
+  }
+
+  // Pause the footstep sound loop if no directional keys are active
+  if (activeDirectionalKeys === 0) {
+    footstepSound.pause();
+  }
 }
 
 class SpaceGuy {
