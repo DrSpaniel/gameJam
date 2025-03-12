@@ -1,3 +1,3 @@
-# Template p5 project
+#gamejam 2023 the space between
 
-This is the README file for the entire project. For more official projects you should write information here about the nature of the project, your name, any special explanations of how the project works, etc.
+unfinished project, however we didnt score last! kinda cool concept
